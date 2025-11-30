@@ -20,7 +20,7 @@
       box-sizing: border-box;
     }
 
-    /* 页面可以垂直滚动，但滚动条隐藏 */
+    /* 页面可以滚动但隐藏滚动条 */
     html, body {
       margin: 0;
       padding: 0;
@@ -29,20 +29,12 @@
       background: radial-gradient(circle at top, #151522 0, #06060a 45%, #020305 100%);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-
       overflow-x: hidden;
       overflow-y: auto;
-      scrollbar-width: none;          /* Firefox 隐藏滚动条 */
+      scrollbar-width: none;
     }
-
-    html::-webkit-scrollbar,
-    body::-webkit-scrollbar {
-      display: none;                  /* Chrome / Safari 隐藏滚动条 */
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
+    html::-webkit-scrollbar, body::-webkit-scrollbar {
+      display: none;
     }
 
     .shell {
@@ -61,19 +53,11 @@
       gap: 6px;
     }
 
-    .title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
     h1 {
-      font-size: 20px;
+      margin: 0;
+      font-size: 22px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      margin: 0;
     }
 
     .subtitle {
@@ -84,7 +68,7 @@
     /* Overview 区块 */
     .overview {
       margin-top: 8px;
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: 12px;
       background: rgba(15,23,42,0.85);
       border: 1px solid rgba(51,65,85,0.9);
@@ -96,19 +80,10 @@
     .overview-title {
       font-size: 14px;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      color: #cbd5f5;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      color: #cbd5f5;
-    }
-
-    .overview p {
-      margin: 2px 0 4px;
-    }
-
-    .overview b {
-      font-weight: 600;
-      color: #f9fafb;
     }
 
     /* 顶部导航按钮 */
@@ -117,12 +92,12 @@
       flex-wrap: wrap;
       gap: 8px;
       padding: 8px;
+      margin-top: 6px;
       border-radius: 999px;
       background: rgba(10,10,22,0.9);
       border: 1px solid rgba(63,63,92,0.8);
       box-shadow: 0 18px 45px rgba(0,0,0,0.45);
       backdrop-filter: blur(18px);
-      margin-top: 8px;
     }
 
     .nav button {
@@ -136,53 +111,30 @@
       cursor: pointer;
       background: transparent;
       color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition:
-        background 0.18s ease,
-        color 0.18s ease,
-        border-color 0.18s ease,
-        transform 0.1s ease,
-        box-shadow 0.12s ease;
       white-space: nowrap;
-    }
-
-    .nav button span.badge {
-      font-size: 10px;
-      padding: 1px 6px;
-      border-radius: 999px;
-      background: rgba(148,163,184,0.18);
-      border: 1px solid rgba(148,163,184,0.45);
-      color: var(--muted);
+      transition: 0.2s;
     }
 
     .nav button.active {
-      background: linear-gradient(135deg, var(--accent-soft), rgba(51,65,85,0.4));
       border-color: var(--accent);
       color: var(--text);
-      box-shadow: 0 0 0 1px rgba(79,140,255,0.35),
-                  0 10px 35px rgba(23,37,84,0.75);
+      background: rgba(79,140,255,0.18);
       transform: translateY(-1px);
     }
 
     .nav button:hover:not(.active) {
       background: rgba(31,41,55,0.9);
-      border-color: rgba(75,85,99,0.8);
       color: #e5e7eb;
     }
 
-    /* iframe 容器：不再固定高度，交给 JS 设置 iframe 高度 */
+    /* iframe 容器 */
     .frame-wrap {
-      margin-top: 10px;
+      margin-top: 12px;
       border-radius: 18px;
       border: 1px solid var(--border);
       background: radial-gradient(circle at top left, #1f2937 0, #020617 55%);
       overflow: hidden;
-      box-shadow:
-        0 20px 50px rgba(0,0,0,0.75),
-        0 0 0 1px rgba(15,23,42,0.9);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.75);
       position: relative;
     }
 
@@ -200,22 +152,10 @@
     }
 
     .footer-note {
-      margin-top: 6px;
+      margin-top: 8px;
       font-size: 11px;
       color: var(--muted);
-      opacity: 0.9;
-    }
-
-    @media (max-width: 768px) {
-      .shell {
-        padding: 12px;
-      }
-      h1 {
-        font-size: 18px;
-      }
-      .nav {
-        border-radius: 14px;
-      }
+      opacity: 0.85;
     }
   </style>
 </head>
@@ -223,10 +163,8 @@
 <body>
   <div class="shell">
     <header>
-      <div class="title-row">
-        <h1>IDV — Assignment 5 · Combined View</h1>
-        <div class="subtitle">Assignments 1–4 embedded · all original interactions preserved</div>
-      </div>
+      <h1>IDV — Assignment 5 · Combined View</h1>
+      <div class="subtitle">Assignments 1–4 embedded · all original interactions preserved</div>
 
       <div class="overview">
         <div class="overview-title">Overview</div>
@@ -237,43 +175,31 @@
       </div>
     </header>
 
+    <!-- 导航按钮 -->
     <div class="nav" id="nav">
-      <button class="active" data-url="https://shayiping.github.io/IDV-assignment1/">
-        A1 · PSI Realtime
-        <span class="badge">D3 / API</span>
-      </button>
-      <button data-url="https://shayiping.github.io/IDV-assignment2/">
-        A2 · 10×5 SVG
-        <span class="badge">SVG Effects</span>
-      </button>
-      <button data-url="https://shayiping.github.io/IDV-assignment3/">
-        A3 · Gallery
-        <span class="badge">Multi-chart</span>
-      </button>
-      <button data-url="https://shayiping.github.io/IDV-assignment4/">
-        A4 · Robust Accuracy
-        <span class="badge">Interactive Bars</span>
-      </button>
+      <button class="active" data-url="https://shayiping.github.io/IDV-assignment1/">A1 · PSI Realtime</button>
+      <button data-url="https://shayiping.github.io/IDV-assignment2/">A2 · 10×5 SVG</button>
+      <button data-url="https://shayiping.github.io/IDV-assignment3/">A3 · Gallery</button>
+      <button data-url="https://shayiping.github.io/IDV-assignment4/">A4 · Robust Accuracy</button>
     </div>
 
+    <!-- iframe 容器（注意：这里不再设置 src） -->
     <div class="frame-wrap">
-      <iframe
-        id="assignFrame"
-        title="IDV Assignment Combined View"
-        src="https://shayiping.github.io/IDV-assignment1/">
-      </iframe>
+      <iframe id="assignFrame" title="IDV Assignment Viewer"></iframe>
     </div>
 
     <div class="footer-note">
-      Tip: Use your mouse wheel / trackpad to scroll the page vertically. Scrollbars are hidden visually, but full-page scrolling and all assignment interactions remain available.
+      Tip: Scrollbars are hidden visually, but the page still supports smooth vertical scrolling with your mouse wheel / trackpad.
     </div>
   </div>
 
+  <!-- 自动加载 + 自动高度脚本 -->
   <script>
     const frame = document.getElementById('assignFrame');
     const buttons = document.querySelectorAll('.nav button');
+    const DEFAULT_URL = "https://shayiping.github.io/IDV-assignment1/";
 
-    // 自动根据 iframe 内部内容调整高度（同源才有效）
+    // 自动根据 iframe 内容调整高度
     function autoResizeFrame() {
       try {
         const doc = frame.contentDocument || frame.contentWindow.document;
@@ -288,49 +214,42 @@
         );
 
         if (height && !isNaN(height)) {
-          frame.style.height = height + 'px';
+          frame.style.height = height + "px";
         }
-      } catch (e) {
-        // 如果以后嵌入跨域页面，这里会抛错，直接忽略即可
-        console.warn('autoResizeFrame error:', e);
+      } catch (err) {
+        console.warn("Resize blocked:", err);
       }
     }
 
+    // 统一的加载函数
     function setFrameSrc(url) {
-      frame.classList.remove('loaded');
+      frame.classList.remove("loaded");
 
-      frame.addEventListener('load', function onLoad() {
-        frame.classList.add('loaded');
+      frame.addEventListener("load", function onLoad() {
+        frame.classList.add("loaded");
 
-        // 加载完成后多次尝试调整高度（应对延迟渲染的内容）
         autoResizeFrame();
         setTimeout(autoResizeFrame, 200);
         setTimeout(autoResizeFrame, 600);
 
-        frame.removeEventListener('load', onLoad);
+        frame.removeEventListener("load", onLoad);
       });
 
       frame.src = url;
     }
 
-    window.addEventListener('load', () => {
-      // 初次加载首页 iframe 完成后也调一次
-      frame.addEventListener('load', function onFirstLoad() {
-        frame.classList.add('loaded');
-        autoResizeFrame();
-        setTimeout(autoResizeFrame, 200);
-        setTimeout(autoResizeFrame, 600);
-        frame.removeEventListener('load', onFirstLoad);
-      });
+    // 第一次加载：在 DOM 准备好后加载 A1
+    document.addEventListener("DOMContentLoaded", () => {
+      setFrameSrc(DEFAULT_URL);
     });
 
+    // 按钮切换
     buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        buttons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+      btn.addEventListener("click", () => {
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
 
-        const url = btn.getAttribute('data-url');
-        setFrameSrc(url);
+        setFrameSrc(btn.dataset.url);
       });
     });
   </script>
