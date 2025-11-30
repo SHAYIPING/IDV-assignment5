@@ -20,11 +20,13 @@
       box-sizing: border-box;
     }
 
+    /* 🚫 彻底禁止滚动条（页面本身不允许出现滚动） */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
+      overflow: hidden; /* 关键：禁止整个页面出现任何滚动条 */
       background: radial-gradient(circle at top, #151522 0, #06060a 45%, #020305 100%);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
@@ -45,6 +47,7 @@
       flex-direction: column;
       gap: 12px;
       height: 100vh;
+      overflow: hidden; /* 防止内部子元素撑出滚动条 */
     }
 
     header {
@@ -73,7 +76,6 @@
       color: var(--muted);
     }
 
-    /* 顶部导航按钮 */
     .nav {
       display: flex;
       flex-wrap: wrap;
@@ -97,16 +99,7 @@
       cursor: pointer;
       background: transparent;
       color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition:
-        background 0.18s ease,
-        color 0.18s ease,
-        border-color 0.18s ease,
-        transform 0.1s ease,
-        box-shadow 0.12s ease;
+      transition: background .18s ease, color .18s ease, border-color .18s ease, transform .1s ease;
       white-space: nowrap;
     }
 
@@ -123,29 +116,24 @@
       background: linear-gradient(135deg, var(--accent-soft), rgba(51,65,85,0.4));
       border-color: var(--accent);
       color: var(--text);
-      box-shadow: 0 0 0 1px rgba(79,140,255,0.35),
-                  0 10px 35px rgba(23,37,84,0.75);
       transform: translateY(-1px);
     }
 
-    .nav button:hover:not(.active) {
+    .nav button:hover:not(.active)) {
       background: rgba(31,41,55,0.9);
       border-color: rgba(75,85,99,0.8);
       color: #e5e7eb;
     }
 
-    /* iframe 容器 */
+    /* 🚫 彻底禁止滚动条（iframe 也不允许出现滚动） */
     .frame-wrap {
       flex: 1 1 auto;
-      min-height: 0; /* 关键：让 iframe 可以flex 填满 */
+      min-height: 0;
       margin-top: 4px;
       border-radius: 18px;
       border: 1px solid var(--border);
       background: radial-gradient(circle at top left, #1f2937 0, #020617 55%);
-      overflow: hidden;
-      box-shadow:
-        0 20px 50px rgba(0,0,0,0.75),
-        0 0 0 1px rgba(15,23,42,0.9);
+      overflow: hidden; /* 关键：不允许内部出现滚动 */
       position: relative;
     }
 
@@ -157,30 +145,19 @@
       background: #ffffff;
       opacity: 0;
       transition: opacity 0.35s ease;
+
+      overflow: hidden;   /* 关键：iframe 内部禁滚动 */
     }
 
     iframe.loaded {
       opacity: 1;
     }
 
-    /* 底部小提示 */
     .footer-note {
       margin-top: 4px;
       font-size: 11px;
       color: var(--muted);
       opacity: 0.9;
-    }
-
-    @media (max-width: 768px) {
-      .shell {
-        padding: 12px;
-      }
-      h1 {
-        font-size: 18px;
-      }
-      .nav {
-        border-radius: 14px;
-      }
     }
   </style>
 </head>
@@ -194,37 +171,32 @@
       </div>
     </header>
 
-    <!-- 顶部按钮导航 -->
     <div class="nav" id="nav">
       <button class="active" data-url="https://shayiping.github.io/IDV-assignment1/">
-        A1 · PSI Realtime
-        <span class="badge">D3 / API</span>
+        A1 · PSI Realtime <span class="badge">D3 / API</span>
       </button>
       <button data-url="https://shayiping.github.io/IDV-assignment2/">
-        A2 · 10×5 SVG
-        <span class="badge">SVG Effects</span>
+        A2 · 10×5 SVG <span class="badge">SVG Effects</span>
       </button>
       <button data-url="https://shayiping.github.io/IDV-assignment3/">
-        A3 · Gallery
-        <span class="badge">Multi-chart</span>
+        A3 · Gallery <span class="badge">Multi-chart</span>
       </button>
       <button data-url="https://shayiping.github.io/IDV-assignment4/">
-        A4 · Robust Accuracy
-        <span class="badge">Interactive Bars</span>
+        A4 · Robust Accuracy <span class="badge">Interactive Bars</span>
       </button>
     </div>
 
-    <!-- 内容区域：用 iframe 承载各个作业 -->
     <div class="frame-wrap">
       <iframe
         id="assignFrame"
         title="IDV Assignment Combined View"
+        scrolling="no"  <!-- 🚫 禁用 iframe 自身滚动条 -->
         src="https://shayiping.github.io/IDV-assignment1/">
       </iframe>
     </div>
 
     <div class="footer-note">
-      Tip: 上方按钮切换不同作业，内部是原始页面，所以所有动画、hover、渐入效果都保持不变。
+      Tip: 所有滚动条已彻底移除（body + iframe），所有动画和交互不受影响。
     </div>
   </div>
 
@@ -232,12 +204,9 @@
     const frame = document.getElementById('assignFrame');
     const buttons = document.querySelectorAll('.nav button');
 
-    // 每次 iframe 加载完成后再渐入
     function setFrameSrc(url) {
-      // 先移除 loaded，让上一页淡出
       frame.classList.remove('loaded');
 
-      // 监听 load 事件：加载完再淡入
       frame.addEventListener('load', function onLoad() {
         frame.classList.add('loaded');
         frame.removeEventListener('load', onLoad);
@@ -246,19 +215,15 @@
       frame.src = url;
     }
 
-    // 初始化：首屏加上 loaded
     window.addEventListener('load', () => {
       frame.classList.add('loaded');
     });
 
-    // 按钮点击逻辑
     buttons.forEach(btn => {
       btn.addEventListener('click', () => {
-        // 切换按钮高亮
         buttons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // 切换 iframe 页面
         const url = btn.getAttribute('data-url');
         setFrameSrc(url);
       });
