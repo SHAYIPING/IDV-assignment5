@@ -20,7 +20,7 @@
       box-sizing: border-box;
     }
 
-    /* ✅ 页面可以垂直滚动，但滚动条隐藏 */
+    /* 页面可以垂直滚动，但滚动条隐藏 */
     html, body {
       margin: 0;
       padding: 0;
@@ -81,7 +81,7 @@
       color: var(--muted);
     }
 
-    /* 🔹 Overview 区块 */
+    /* Overview 区块 */
     .overview {
       margin-top: 8px;
       padding: 10px 14px;
@@ -173,7 +173,7 @@
       color: #e5e7eb;
     }
 
-    /* iframe 容器：用固定视口高度，剩下靠页面整体滚动 */
+    /* iframe 容器：不再固定高度，交给 JS 设置 iframe 高度 */
     .frame-wrap {
       margin-top: 10px;
       border-radius: 18px;
@@ -184,13 +184,10 @@
         0 20px 50px rgba(0,0,0,0.75),
         0 0 0 1px rgba(15,23,42,0.9);
       position: relative;
-
-      height: 140vh; /* 根据需要可以改成 70vh / 80vh 等 */
     }
 
     iframe {
       width: 100%;
-      height: 100%;
       border: 0;
       display: block;
       background: #ffffff;
@@ -219,9 +216,6 @@
       .nav {
         border-radius: 14px;
       }
-      .frame-wrap {
-        height: 68vh;
-      }
     }
   </style>
 </head>
@@ -234,7 +228,6 @@
         <div class="subtitle">Assignments 1–4 embedded · all original interactions preserved</div>
       </div>
 
-      <!-- 🔹 顶部 Overview 区块 -->
       <div class="overview">
         <div class="overview-title">Overview</div>
         <p><b>What this page contains:</b> This page works as a single hub for my IDV work, embedding Assignments 1–4 into one combined view. You can switch between them using the navigation bar below.</p>
@@ -244,7 +237,6 @@
       </div>
     </header>
 
-    <!-- 顶部按钮导航 -->
     <div class="nav" id="nav">
       <button class="active" data-url="https://shayiping.github.io/IDV-assignment1/">
         A1 · PSI Realtime
@@ -264,7 +256,6 @@
       </button>
     </div>
 
-    <!-- iframe 承载各个作业 -->
     <div class="frame-wrap">
       <iframe
         id="assignFrame"
@@ -282,11 +273,40 @@
     const frame = document.getElementById('assignFrame');
     const buttons = document.querySelectorAll('.nav button');
 
+    // 自动根据 iframe 内部内容调整高度（同源才有效）
+    function autoResizeFrame() {
+      try {
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        if (!doc) return;
+
+        const body = doc.body;
+        const html = doc.documentElement;
+
+        const height = Math.max(
+          body.scrollHeight, body.offsetHeight,
+          html.clientHeight, html.scrollHeight, html.offsetHeight
+        );
+
+        if (height && !isNaN(height)) {
+          frame.style.height = height + 'px';
+        }
+      } catch (e) {
+        // 如果以后嵌入跨域页面，这里会抛错，直接忽略即可
+        console.warn('autoResizeFrame error:', e);
+      }
+    }
+
     function setFrameSrc(url) {
       frame.classList.remove('loaded');
 
       frame.addEventListener('load', function onLoad() {
         frame.classList.add('loaded');
+
+        // 加载完成后多次尝试调整高度（应对延迟渲染的内容）
+        autoResizeFrame();
+        setTimeout(autoResizeFrame, 200);
+        setTimeout(autoResizeFrame, 600);
+
         frame.removeEventListener('load', onLoad);
       });
 
@@ -294,7 +314,14 @@
     }
 
     window.addEventListener('load', () => {
-      frame.classList.add('loaded');
+      // 初次加载首页 iframe 完成后也调一次
+      frame.addEventListener('load', function onFirstLoad() {
+        frame.classList.add('loaded');
+        autoResizeFrame();
+        setTimeout(autoResizeFrame, 200);
+        setTimeout(autoResizeFrame, 600);
+        frame.removeEventListener('load', onFirstLoad);
+      });
     });
 
     buttons.forEach(btn => {
