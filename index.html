@@ -20,22 +20,29 @@
       box-sizing: border-box;
     }
 
-    /* 🚫 彻底禁止滚动条（页面本身不允许出现滚动） */
+    /* ✅ 页面可以垂直滚动，但滚动条隐藏 */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
-      overflow: hidden; /* 关键：禁止整个页面出现任何滚动条 */
+      min-height: 100vh;
       background: radial-gradient(circle at top, #151522 0, #06060a 45%, #020305 100%);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
+
+      overflow-x: hidden;
+      overflow-y: auto;
+      scrollbar-width: none;          /* Firefox 隐藏滚动条 */
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;                  /* Chrome / Safari 隐藏滚动条 */
     }
 
     body {
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
     }
 
     .shell {
@@ -46,8 +53,6 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      height: 100vh;
-      overflow: hidden; /* 防止内部子元素撑出滚动条 */
     }
 
     header {
@@ -76,6 +81,37 @@
       color: var(--muted);
     }
 
+    /* 🔹 Overview 区块 */
+    .overview {
+      margin-top: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(51,65,85,0.9);
+      font-size: 13px;
+      line-height: 1.6;
+      color: #e5e7eb;
+    }
+
+    .overview-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #cbd5f5;
+    }
+
+    .overview p {
+      margin: 2px 0 4px;
+    }
+
+    .overview b {
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    /* 顶部导航按钮 */
     .nav {
       display: flex;
       flex-wrap: wrap;
@@ -86,6 +122,7 @@
       border: 1px solid rgba(63,63,92,0.8);
       box-shadow: 0 18px 45px rgba(0,0,0,0.45);
       backdrop-filter: blur(18px);
+      margin-top: 8px;
     }
 
     .nav button {
@@ -99,7 +136,16 @@
       cursor: pointer;
       background: transparent;
       color: var(--muted);
-      transition: background .18s ease, color .18s ease, border-color .18s ease, transform .1s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.1s ease,
+        box-shadow 0.12s ease;
       white-space: nowrap;
     }
 
@@ -116,25 +162,30 @@
       background: linear-gradient(135deg, var(--accent-soft), rgba(51,65,85,0.4));
       border-color: var(--accent);
       color: var(--text);
+      box-shadow: 0 0 0 1px rgba(79,140,255,0.35),
+                  0 10px 35px rgba(23,37,84,0.75);
       transform: translateY(-1px);
     }
 
-    .nav button:hover:not(.active)) {
+    .nav button:hover:not(.active) {
       background: rgba(31,41,55,0.9);
       border-color: rgba(75,85,99,0.8);
       color: #e5e7eb;
     }
 
-    /* 🚫 彻底禁止滚动条（iframe 也不允许出现滚动） */
+    /* iframe 容器：用固定视口高度，剩下靠页面整体滚动 */
     .frame-wrap {
-      flex: 1 1 auto;
-      min-height: 0;
-      margin-top: 4px;
+      margin-top: 10px;
       border-radius: 18px;
       border: 1px solid var(--border);
       background: radial-gradient(circle at top left, #1f2937 0, #020617 55%);
-      overflow: hidden; /* 关键：不允许内部出现滚动 */
+      overflow: hidden;
+      box-shadow:
+        0 20px 50px rgba(0,0,0,0.75),
+        0 0 0 1px rgba(15,23,42,0.9);
       position: relative;
+
+      height: 72vh; /* 根据需要可以改成 70vh / 80vh 等 */
     }
 
     iframe {
@@ -145,8 +196,6 @@
       background: #ffffff;
       opacity: 0;
       transition: opacity 0.35s ease;
-
-      overflow: hidden;   /* 关键：iframe 内部禁滚动 */
     }
 
     iframe.loaded {
@@ -154,10 +203,25 @@
     }
 
     .footer-note {
-      margin-top: 4px;
+      margin-top: 6px;
       font-size: 11px;
       color: var(--muted);
       opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .shell {
+        padding: 12px;
+      }
+      h1 {
+        font-size: 18px;
+      }
+      .nav {
+        border-radius: 14px;
+      }
+      .frame-wrap {
+        height: 68vh;
+      }
     }
   </style>
 </head>
@@ -167,36 +231,50 @@
     <header>
       <div class="title-row">
         <h1>IDV — Assignment 5 · Combined View</h1>
-        <div class="subtitle">Assignment 1–4 embedded · all original interactions preserved</div>
+        <div class="subtitle">Assignments 1–4 embedded · all original interactions preserved</div>
+      </div>
+
+      <!-- 🔹 顶部 Overview 区块 -->
+      <div class="overview">
+        <div class="overview-title">Overview</div>
+        <p><b>What this page contains:</b> This page works as a single hub for my IDV work, embedding Assignments 1–4 into one combined view. You can switch between them using the navigation bar below.</p>
+        <p><b>How the assignments are merged:</b> Each assignment is kept as an independent page and loaded inside this layout through an iframe. This keeps all original code, transitions, and interactions unchanged, while giving a unified outer frame for navigation.</p>
+        <p><b>Main difficulties:</b> The tricky parts were aligning different page layouts inside a single frame, hiding scrollbars at the outer level while still allowing smooth scrolling, and making sure the embedded pages remained responsive without breaking their existing animations.</p>
+        <p><b>Hardest assignment to integrate:</b> Assignment 1 was the hardest to embed because it relies on live data and more complex scripting logic. I had to make sure that loading it inside an iframe would not interfere with its API calls, timing, and transition effects.</p>
       </div>
     </header>
 
+    <!-- 顶部按钮导航 -->
     <div class="nav" id="nav">
       <button class="active" data-url="https://shayiping.github.io/IDV-assignment1/">
-        A1 · PSI Realtime <span class="badge">D3 / API</span>
+        A1 · PSI Realtime
+        <span class="badge">D3 / API</span>
       </button>
       <button data-url="https://shayiping.github.io/IDV-assignment2/">
-        A2 · 10×5 SVG <span class="badge">SVG Effects</span>
+        A2 · 10×5 SVG
+        <span class="badge">SVG Effects</span>
       </button>
       <button data-url="https://shayiping.github.io/IDV-assignment3/">
-        A3 · Gallery <span class="badge">Multi-chart</span>
+        A3 · Gallery
+        <span class="badge">Multi-chart</span>
       </button>
       <button data-url="https://shayiping.github.io/IDV-assignment4/">
-        A4 · Robust Accuracy <span class="badge">Interactive Bars</span>
+        A4 · Robust Accuracy
+        <span class="badge">Interactive Bars</span>
       </button>
     </div>
 
+    <!-- iframe 承载各个作业 -->
     <div class="frame-wrap">
       <iframe
         id="assignFrame"
         title="IDV Assignment Combined View"
-        scrolling="no"  <!-- 🚫 禁用 iframe 自身滚动条 -->
         src="https://shayiping.github.io/IDV-assignment1/">
       </iframe>
     </div>
 
     <div class="footer-note">
-      Tip: 所有滚动条已彻底移除（body + iframe），所有动画和交互不受影响。
+      Tip: Use your mouse wheel / trackpad to scroll the page vertically. Scrollbars are hidden visually, but full-page scrolling and all assignment interactions remain available.
     </div>
   </div>
 
